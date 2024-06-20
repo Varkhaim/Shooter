@@ -8,12 +8,7 @@ public class BasicBullet : Missile
 {
     private int missileDamage;
     private Canon owner;
-    private NativeArray<Vector3> positions;
 
-    private void Awake()
-    {
-        positions = new NativeArray<Vector3>(1, Allocator.Persistent);
-    }
 
     public override void Init(float bulletSpeed, Vector3 movementDirection, int missileDamage, Canon owner)
     {
@@ -26,6 +21,8 @@ public class BasicBullet : Missile
 
     protected override void Movement()
     {
+        NativeArray<Vector3> positions = new NativeArray<Vector3>(1, Allocator.Persistent);
+
         BulletMovementJob job = new BulletMovementJob()
         {
             positions = positions,
@@ -45,6 +42,8 @@ public class BasicBullet : Missile
             gameObject.SetActive(false); 
             GameManager.Instance.OnGameRestart.RemoveListener(DeactivateObject);
         }
+
+        positions.Dispose();
     }
 
     private void DeactivateObject()

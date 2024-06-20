@@ -147,6 +147,7 @@ public class Canon : MonoBehaviour
         currentHealth = maxHealth;
         GameManager.Instance.UpdatePoints(Points);
         GameManager.Instance.UpdateHealth(currentHealth);
+        GameManager.Instance.UpdateLevel(level);
         specialAbility.Init();
     }
 }

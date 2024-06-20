@@ -19,7 +19,6 @@ public abstract class Enemy : MonoBehaviour
     protected int experienceReward;
     protected int pointsReward;
     protected float baseDamage;
-    protected NativeArray<Vector3> positions;
 
     public UnityEvent OnBeingHit;
     public UnityEvent OnDeath;
@@ -29,10 +28,6 @@ public abstract class Enemy : MonoBehaviour
     protected float finishZ;
     protected EnemySpawner spawner;
 
-    private void Awake()
-    {
-        positions = new NativeArray<Vector3>(1, Allocator.Persistent);
-    }
 
     public enum EnemyType
     {
@@ -47,6 +42,7 @@ public abstract class Enemy : MonoBehaviour
         CurrentHealth = MaxHealth;
         Color randomColor = GetRandomColor();
         renderer.material.SetColor("_Color", randomColor);
+        BonusMovementSpeed = 0;
         this.finishZ = finishZ;
         this.spawner = spawner;
         GameManager.Instance.OnGameRestart.AddListener(Reset);
@@ -89,6 +85,8 @@ public abstract class Enemy : MonoBehaviour
     private void Update()
     {
 
+        NativeArray<Vector3> positions = new NativeArray<Vector3>(1, Allocator.Persistent);
+
         EnemyMovementJob job = new EnemyMovementJob()
         {
             positions = positions,
@@ -103,6 +101,8 @@ public abstract class Enemy : MonoBehaviour
         jobHandle.Complete();
 
         transform.position = job.positions[0];
+
+        positions.Dispose();
 
         if (transform.position.z < finishZ)
         {

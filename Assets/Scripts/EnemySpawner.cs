@@ -177,30 +177,59 @@ public class EnemySpawner : MonoBehaviour
             case Enemy.EnemyType.SMALL_CUBE:
                 {
                     enemy.OnReachingPlayer.AddListener(HealAllCubes);
-                    OnCubeHealingTrigger.AddListener(() => enemy.HealMaxHP(0.1f));
-                    OnWoundedHealingTrigger.AddListener(() => enemy.HealWoundedToFull());
+
+                    UnityAction HealMaxHPAction = () => enemy.HealMaxHP(0.1f);
+                    UnityAction HealWoundedToFullAction = () => enemy.HealWoundedToFull();
+
+                    OnCubeHealingTrigger.AddListener(HealMaxHPAction);
+                    OnWoundedHealingTrigger.AddListener(HealWoundedToFullAction);
+
+                    enemy.OnDeath.AddListener(() => OnCubeHealingTrigger.RemoveListener(HealMaxHPAction));
+                    enemy.OnDeath.AddListener(() => OnWoundedHealingTrigger.RemoveListener(HealWoundedToFullAction));
                 }
                 break;
             case Enemy.EnemyType.BIG_CUBE:
                 {
-                    enemy.OnDeath.AddListener(HealAllWoundedEnemies);
-                    OnCubeHealingTrigger.AddListener(() => enemy.HealMaxHP(0.1f));
-                    OnWoundedHealingTrigger.AddListener(() => enemy.HealWoundedToFull());
+                    enemy.OnDeath.AddListener(HealAllWoundedEnemies); 
+
+                    UnityAction HealMaxHPAction = () => enemy.HealMaxHP(0.1f);
+                    UnityAction HealWoundedToFullAction = () => enemy.HealWoundedToFull();
+
+                    OnCubeHealingTrigger.AddListener(HealMaxHPAction);
+                    OnWoundedHealingTrigger.AddListener(HealWoundedToFullAction);
+
+                    enemy.OnDeath.AddListener(() => OnCubeHealingTrigger.RemoveListener(HealMaxHPAction));
                 }
                 break;
             case Enemy.EnemyType.SMALL_BALL:
                 {
                     enemy.OnBeingHit.AddListener(SpeedUpSmallBalls);
-                    OnWoundedHealingTrigger.AddListener(() => enemy.HealWoundedToFull());
-                    OnSpeedingUpTrigger.AddListener(() => enemy.IncreaseMovementSpeed(0.1f));
-                    OnSlowingDownTrigger.AddListener(() => enemy.DecreaseMovementSpeed(0.1f));
+
+                    UnityAction HealWoundedToFullAction = () => enemy.HealWoundedToFull();
+                    UnityAction IncreaseMovementSpeedAction = () => enemy.IncreaseMovementSpeed(0.1f);
+                    UnityAction DecreaseMovementSpeedAction = () => enemy.DecreaseMovementSpeed(0.1f);
+
+                    OnSpeedingUpTrigger.AddListener(IncreaseMovementSpeedAction);
+                    OnWoundedHealingTrigger.AddListener(HealWoundedToFullAction);
+                    OnSlowingDownTrigger.AddListener(DecreaseMovementSpeedAction);
+
+                    enemy.OnDeath.AddListener(() => OnSpeedingUpTrigger.RemoveListener(IncreaseMovementSpeedAction));
+                    enemy.OnDeath.AddListener(() => OnWoundedHealingTrigger.RemoveListener(HealWoundedToFullAction));
+                    enemy.OnDeath.AddListener(() => OnSlowingDownTrigger.RemoveListener(DecreaseMovementSpeedAction));
                 }
                 break;
             case Enemy.EnemyType.BIG_BALL:
                 {
                     enemy.OnBeingHit.AddListener(SlowDownAllBalls);
-                    OnWoundedHealingTrigger.AddListener(() => enemy.HealWoundedToFull());
-                    OnSlowingDownTrigger.AddListener(() => enemy.DecreaseMovementSpeed(0.1f));
+
+                    UnityAction HealWoundedToFullAction = () => enemy.HealWoundedToFull();
+                    UnityAction DecreaseMovementSpeed = () => enemy.DecreaseMovementSpeed(0.1f);
+
+                    OnWoundedHealingTrigger.AddListener(HealWoundedToFullAction);
+                    OnSlowingDownTrigger.AddListener(DecreaseMovementSpeed);
+
+                    enemy.OnDeath.AddListener(() => OnWoundedHealingTrigger.RemoveListener(HealWoundedToFullAction));
+                    enemy.OnDeath.AddListener(() => OnSlowingDownTrigger.RemoveListener(DecreaseMovementSpeed));
                 }
                 break;
             default:
